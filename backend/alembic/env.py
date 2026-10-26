@@ -21,8 +21,10 @@ if config.config_file_name is not None:
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app.db import Base, engine as app_engine
-from app import models  # noqa
-config.set_main_option('sqlalchemy.url', app_engine.url.render_as_string(hide_password=False).replace('%', '%%'))
+from app import models, config as app_config  # noqa
+# Migrate over the direct (unpooled) connection, unless the app itself fell back to SQLite
+_url = app_engine.url.render_as_string(hide_password=False) if app_engine.url.get_backend_name() == "sqlite" else app_config.MIGRATION_DATABASE_URL
+config.set_main_option('sqlalchemy.url', _url.replace('%', '%%'))
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

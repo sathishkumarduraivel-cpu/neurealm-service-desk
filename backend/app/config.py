@@ -1,9 +1,19 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./servicedesk.db")
-for _pfx in ("postgres://", "postgresql://"):
-    if DATABASE_URL.startswith(_pfx):
-        DATABASE_URL = "postgresql+psycopg2://" + DATABASE_URL[len(_pfx):]
+# Local dev: pick up the env `neon env pull` writes at the repo root. Real env vars (Render) always win.
+for _f in (".env", ".env.local"):
+    load_dotenv(Path(__file__).resolve().parents[2] / _f, override=False)
+
+def _sa_url(url):
+    for pfx in ("postgres://", "postgresql://"):
+        if url.startswith(pfx):
+            return "postgresql+psycopg2://" + url[len(pfx):]
+    return url
+
+DATABASE_URL = _sa_url(os.getenv("DATABASE_URL", "sqlite:///./servicedesk.db"))  # Neon pooled URL for app traffic
+MIGRATION_DATABASE_URL = _sa_url(os.getenv("DATABASE_URL_UNPOOLED") or DATABASE_URL)  # direct URL for Alembic DDL
 try:
     from sqlalchemy.engine import make_url as _mk
     _mk(DATABASE_URL)

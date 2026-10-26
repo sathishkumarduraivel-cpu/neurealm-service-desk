@@ -14,6 +14,8 @@ services:
         value: "3.12.7"
       - key: DATABASE_URL          # Neon connection string, e.g. postgresql://...neon.tech/...?sslmode=require
         sync: false
+      - key: DATABASE_URL_UNPOOLED # Neon direct (non -pooler) URL, used by Alembic migrations
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS          # your static site URL, e.g. https://neurealm-service-desk-web.onrender.com

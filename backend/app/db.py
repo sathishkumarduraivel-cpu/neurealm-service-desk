@@ -4,7 +4,7 @@ from . import config
 import logging
 
 def _make_engine(url):
-    kw = {"connect_args": {"check_same_thread": False}} if url.startswith("sqlite") else {"pool_pre_ping": True}
+    kw = {"connect_args": {"check_same_thread": False}} if url.startswith("sqlite") else {"pool_pre_ping": True, "pool_recycle": 300}  # Neon computes scale to zero
     return create_engine(url, **kw)
 
 engine = _make_engine(config.DATABASE_URL)
