@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: servicedesk, POSTGRES_PASSWORD: servicedesk, POSTGRES_DB: servicedesk }
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U servicedesk"], interval: 5s, retries: 10 }
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://servicedesk:servicedesk@db:5432/servicedesk
+      JWT_SECRET: ${JWT_SECRET:-replace-with-a-long-random-secret-value}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+      APP_SCHEDULER: "1"
+      SLA_JOB_SECONDS: "60"
+      OIDC_PROVIDER: ${OIDC_PROVIDER:-}
+      OIDC_ISSUER: ${OIDC_ISSUER:-}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-}
+    depends_on: { db: { condition: service_healthy } }
+    ports: ["8000:8000"]
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    ports: ["8080:80"]
+volumes: { pgdata: {} }

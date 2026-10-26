@@ -1,0 +1,11 @@
+import axios from "axios";
+export const api = axios.create({ baseURL: (import.meta.env.VITE_API_URL || "") + "/api" });
+api.interceptors.request.use((c) => { const t = localStorage.getItem("nrsd_token"); if (t) c.headers.Authorization = `Bearer ${t}`; return c; });
+api.interceptors.response.use((r) => r, (e) => { if (e.response?.status === 401 && !(location.pathname + location.hash).includes("/login")) { (localStorage.removeItem("nrsd_token"), localStorage.removeItem("nrsd_user")); location.href = import.meta.env.VITE_HASH_ROUTER === "1" ? "/#/login" : "/login"; } return Promise.reject(e); });
+export type User = { id: number; email: string; full_name: string; role: "admin" | "agent" | "end_user"; group_id: number | null; active: boolean };
+export type Group = { id: number; name: string };
+export type Rec = { id: number; number: string; module: string; title: string; description: string; state: string; priority: string; impact: number; urgency: number;
+  category: string; assignment_group: Group | null; assignee: User | null; requester: User | null; assignment_group_id: number | null; assignee_id: number | null;
+  data: any; sla_due_at: string | null; sla_breached: boolean; sla_status: string; ai_suggestion: any; created_at: string; updated_at?: string; resolved_at: string | null;
+  linked?: Rec[]; comments?: any[]; approvals?: any[]; allowed_transitions?: string[] };
+export const errMsg = (e: any) => e?.response?.data?.detail?.toString?.() || e.message;

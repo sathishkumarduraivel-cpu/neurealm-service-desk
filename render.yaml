@@ -1,0 +1,48 @@
+# Render Blueprint for Neurealm Service Desk (free plan).
+# Database: bring your own Neon Postgres. Set DATABASE_URL in the Render dashboard (it is never stored here).
+services:
+  - type: web
+    name: neurealm-service-desk-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DATABASE_URL          # Neon connection string, e.g. postgresql://...neon.tech/...?sslmode=require
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS          # your static site URL, e.g. https://neurealm-service-desk-web.onrender.com
+        sync: false
+      - key: BRAND_NAME
+        value: Neurealm Service Desk
+      - key: APP_SCHEDULER         # in-process SLA/escalation job
+        value: "1"
+      - key: SLA_JOB_SECONDS
+        value: "60"
+      - key: AI_CONFIDENCE_THRESHOLD
+        value: "0.6"
+      - key: LLM_API_KEY           # optional; Neurealm AI uses smart rules without it
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://api.openai.com/v1
+      - key: LLM_MODEL
+        value: gpt-4o-mini
+
+  - type: web
+    name: neurealm-service-desk-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL          # your API URL, e.g. https://neurealm-service-desk-api.onrender.com (no trailing slash, no /api)
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

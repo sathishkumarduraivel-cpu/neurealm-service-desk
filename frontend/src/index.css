@@ -1,0 +1,61 @@
+@import "@fontsource/exo/500.css";
+@import "@fontsource/exo/600.css";
+@import "@fontsource/exo/700.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Neurealm palette (from neurealm.com): navy #081160, blue #1863DC / #168AFF, red #E5002B, ink #011C25 */
+    --background: 230 30% 98%; --foreground: 222 52% 15%;
+    --card: 0 0% 100%; --card-foreground: 222 52% 15%;
+    --popover: 0 0% 100%; --popover-foreground: 222 52% 15%;
+    --primary: 219 80% 42%; --primary-foreground: 0 0% 100%;
+    --secondary: 234 85% 20%; --secondary-foreground: 0 0% 100%;
+    --muted: 225 25% 96%; --muted-foreground: 225 14% 42%;
+    --accent: 218 80% 96%; --accent-foreground: 222 52% 15%;
+    --destructive: 349 100% 45%; --destructive-foreground: 0 0% 100%;
+    --warning: 25 88% 60%;
+    --border: 225 18% 90%; --input: 225 18% 86%; --ring: 219 80% 42%;
+    --sidebar: 0 0% 100%; --sidebar-foreground: 222 30% 28%; --sidebar-border: 225 18% 91%; --sidebar-accent: 218 80% 96%;
+    --radius: 0.6rem;
+  }
+  * { @apply border-border; }
+  h1, h2, h3, h4, .font-display { font-family: Exo, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.01em; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { @apply bg-background text-foreground font-sans text-sm;  }
+  ::selection { @apply bg-primary/20; }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-thumb { @apply bg-border rounded-full; border: 3px solid transparent; background-clip: content-box; }
+}
+
+/* Legacy utility classes used across module pages, remapped onto the design system */
+@layer components {
+  .card { @apply rounded-lg border bg-card text-card-foreground shadow-xs; }
+  .btn { @apply inline-flex h-9 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50; }
+  .btn-ghost { @apply inline-flex h-9 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border bg-card px-3.5 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50; }
+  .input { @apply flex h-9 w-full rounded-md border border-input bg-card px-3 py-1.5 text-sm text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:border-ring disabled:opacity-50; }
+  textarea.input { @apply h-auto min-h-[88px]; }
+  .label { @apply mb-1.5 block text-xs font-medium text-muted-foreground; }
+  .th { @apply h-10 border-b bg-muted/40 px-4 text-left align-middle text-xs font-medium text-muted-foreground whitespace-nowrap; }
+  .td { @apply border-b px-4 py-2.5 align-middle text-sm; }
+  tbody tr:last-child > .td { @apply border-b-0; }
+  tbody tr:has(> .td) { @apply transition-colors hover:bg-muted/40; }
+  .chip { @apply inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium leading-4; }
+}
+
+.react-flow__attribution { display: none; }
+.react-flow__controls { @apply overflow-hidden rounded-md border shadow-xs; }
+.react-flow__controls-button { background: hsl(var(--card)); border-bottom-color: hsl(var(--border)); fill: hsl(var(--foreground)); }
+.react-flow__controls-button:hover { background: hsl(var(--accent)); }
+.react-flow__node { font-family: inherit; }
+
+@media print {
+  aside, header, nav, [aria-label="Ask Neurealm AI"], [role="dialog"] { display: none !important; }
+  main { overflow: visible !important; }
+  body { background: #fff; }
+}
